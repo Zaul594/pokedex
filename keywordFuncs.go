@@ -1,12 +1,15 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
+
+	"github.com/Zaul594/pokedexcli/internal/pokeapi"
 )
 
 // these functions used by keywords
-func commandHelp() error {
+func commandHelp(cfg *config) error {
 	fmt.Println("to the Pokedex!")
 	fmt.Println("Usage:")
 
@@ -17,31 +20,45 @@ func commandHelp() error {
 	return nil
 }
 
-func commandExit() error {
+func commandExit(cfg *config) error {
 	os.Exit(0)
 	return nil
 }
 
-func commandMap() error {
+func commandMap(cfg *config) error {
 
-	for i := 1; i <= 20; i++ {
-		locationID, location, err := getMap(i)
-		if err != nil {
-			return err
-		}
-		fmt.Println(locationID, location)
+	pokeapiClient := pokeapi.NewClient()
+
+	response, err := pokeapiClient.GetMap(cfg.nextLocationURL)
+	if err != nil {
+		return err
 	}
+	fmt.Println("Local areas:")
+	for _, area := range response.Results {
+		fmt.Println(" _ %s\n", area.Name)
+	}
+
+	cfg.nextLocationURL = response.Next
+	cfg.prevLocationURL = response.Previous
 	return nil
 }
 
-func commandMapb() error {
-
-	for i := 20; i >= 1; i-- {
-		locationID, location, err := getMap(i)
-		if err != nil {
-			return err
-		}
-		fmt.Println(locationID, location)
+func commandMapb(cfg *config) error {
+	if cfg.prevLocationURL == nil {
+		return errors.New("you're on the first page")
 	}
+	pokeapiClient := pokeapi.NewClient()
+
+	response, err := pokeapiClient.GetMap(cfg.prevLocationURL)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Local areas:")
+	for _, area := range response.Results {
+		fmt.Println(" _ %s \n", area.Name)
+	}
+
+	cfg.nextLocationURL = response.Next
+	cfg.prevLocationURL = response.Previous
 	return nil
 }
