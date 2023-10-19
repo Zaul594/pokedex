@@ -14,9 +14,21 @@ func startRepl() {
 		fmt.Print(" >")
 
 		scanner.Scan()
-		text := scanner.Text()
+		text := cleanInput(scanner.Text())
 
-		fmt.Println("echoing: ", text)
+		command := text[0]
+		keyWord, exists := isKeyword()[command]
+		if exists {
+			err := keyWord.callback()
+			if err != nil {
+				fmt.Println(err)
+			}
+			continue
+		} else {
+			fmt.Println("Unknown command")
+			continue
+		}
+
 	}
 
 }
