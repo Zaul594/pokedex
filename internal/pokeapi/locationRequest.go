@@ -14,6 +14,16 @@ func (c *Client) GetMap(URL *string) (LocationResp, error) {
 		url = *URL
 	}
 
+	if val, ok := c.cache.Get(url); ok {
+		locationResp := LocationResp{}
+		err := json.Unmarshal(val, &locationResp)
+		if err != nil {
+			return LocationResp{}, err
+		}
+
+		return locationResp, nil
+	}
+
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return LocationResp{}, err
@@ -40,5 +50,6 @@ func (c *Client) GetMap(URL *string) (LocationResp, error) {
 		return LocationResp{}, err
 	}
 
+	c.cache.Add(url, data)
 	return locationResp, nil
 }

@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-
-	"github.com/Zaul594/pokedexcli/internal/pokeapi"
 )
 
 // these functions used by keywords
@@ -26,16 +24,13 @@ func commandExit(cfg *config) error {
 }
 
 func commandMap(cfg *config) error {
-
-	pokeapiClient := pokeapi.NewClient()
-
-	response, err := pokeapiClient.GetMap(cfg.nextLocationURL)
+	response, err := cfg.pokeapiClient.GetMap(cfg.nextLocationURL)
 	if err != nil {
 		return err
 	}
 	fmt.Println("Local areas:")
 	for _, area := range response.Results {
-		fmt.Println(" _ %s\n", area.Name)
+		fmt.Printf(" _ %s\n", area.Name)
 	}
 
 	cfg.nextLocationURL = response.Next
@@ -47,15 +42,14 @@ func commandMapb(cfg *config) error {
 	if cfg.prevLocationURL == nil {
 		return errors.New("you're on the first page")
 	}
-	pokeapiClient := pokeapi.NewClient()
 
-	response, err := pokeapiClient.GetMap(cfg.prevLocationURL)
+	response, err := cfg.pokeapiClient.GetMap(cfg.prevLocationURL)
 	if err != nil {
 		return err
 	}
 	fmt.Println("Local areas:")
 	for _, area := range response.Results {
-		fmt.Println(" _ %s \n", area.Name)
+		fmt.Printf(" _ %s \n", area.Name)
 	}
 
 	cfg.nextLocationURL = response.Next

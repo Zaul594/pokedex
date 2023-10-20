@@ -27,7 +27,7 @@ func TestCleanImput(t *testing.T) {
 			actualWord := actual[i]
 			expectedWord := cs.expected[i]
 			if actualWord != expectedWord {
-				t.Error("%v does not equil %v", actualWord, expectedWord)
+				t.Errorf("%v does not equil %v", actualWord, expectedWord)
 			}
 		}
 
