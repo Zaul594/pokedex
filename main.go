@@ -10,13 +10,12 @@ type config struct {
 	pokeapiClient   pokeapi.Client
 	nextLocationURL *string
 	prevLocationURL *string
+	location        string
 }
 
 func main() {
 	cfg := config{
-		pokeapiClient: pokeapi.NewClient(5*time.Second, time.Minute*5),
+		pokeapiClient: pokeapi.NewClient(10*time.Second, time.Minute*5),
 	}
 	startRepl(&cfg)
 }
-
-//test

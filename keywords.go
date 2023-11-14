@@ -6,6 +6,7 @@ type cliCommand struct {
 	callback    func(*config) error
 }
 
+// sets up key words and what they do when entered into the pokedex.
 func isKeyword() map[string]cliCommand {
 
 	keywords := map[string]cliCommand{
@@ -28,6 +29,11 @@ func isKeyword() map[string]cliCommand {
 			name:        "map",
 			description: "shows a list of the previos 20 locations",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "map",
+			description: "shows the pokemon that can be found in this area",
+			callback:    commandExplore,
 		},
 	}
 	return keywords

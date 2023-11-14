@@ -1,5 +1,7 @@
 package pokeapi
 
+//pokeapi is used to set up the api for the pokedex
+
 import (
 	"encoding/json"
 	"fmt"
@@ -7,6 +9,7 @@ import (
 	"net/http"
 )
 
+// GetMap gets the location from https://pokeapi.co/api/v2
 func (c *Client) GetMap(URL *string) (LocationResp, error) {
 	endpoint := "/location-area"
 	url := baseURL + endpoint

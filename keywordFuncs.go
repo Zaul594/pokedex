@@ -56,3 +56,13 @@ func commandMapb(cfg *config) error {
 	cfg.prevLocationURL = response.Previous
 	return nil
 }
+
+func commandExplore(cfg *config) error {
+	response, err := cfg.pokeapiClient.LocationExplore(cfg.location)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf(response.Name)
+	return nil
+}
