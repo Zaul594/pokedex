@@ -9,19 +9,22 @@ import (
 
 // startRepl starts a ui that scanns the users input for key words then displays an ouput dependong on the key words inputed by the user.
 func startRepl(cfg *config) {
-	scanner := bufio.NewScanner(os.Stdin)
-
+	reader := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print(" >")
+		fmt.Print("Pokedex > ")
+		reader.Scan()
 
-		scanner.Scan()
-		text := cleanInput(scanner.Text())
+		words := cleanInput(reader.Text())
+		if len(words) == 0 {
+			continue
+		}
 
-		cfg.location = text[1]
-		command := text[0]
-		keyWord, exists := isKeyword()[command]
+		commandName := words[0]
+		cfg.location = words[1]
+
+		command, exists := isKeyword()[commandName]
 		if exists {
-			err := keyWord.callback(cfg)
+			err := command.callback(cfg)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -30,9 +33,7 @@ func startRepl(cfg *config) {
 			fmt.Println("Unknown command")
 			continue
 		}
-
 	}
-
 }
 
 // cleanInput makes the words in the input all lowercase so the Pokedex can understand the key words no mater how they are inputed.

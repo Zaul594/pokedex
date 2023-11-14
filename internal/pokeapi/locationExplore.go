@@ -16,6 +16,8 @@ func (c *Client) LocationExplore(location string) (Pokemon, error) {
 	for _, area := range resp.Results {
 		if location == area.Name {
 			id = area.ID
+		} else {
+			return Pokemon{}, fmt.Errorf("this is not an area name")
 		}
 	}
 
