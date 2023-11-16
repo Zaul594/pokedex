@@ -11,20 +11,23 @@ import (
 func startRepl(cfg *config) {
 	reader := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print("Pokedex > ")
+		fmt.Println(" > ")
 		reader.Scan()
 
-		words := cleanInput(reader.Text())
-		if len(words) == 0 {
+		text := cleanInput(reader.Text())
+		if len(text) == 0 {
 			continue
 		}
 
-		commandName := words[0]
-		cfg.location = words[1]
+		commandName := text[0]
+		arg := []string{}
+		if len(text) > 1 {
+			arg = text[1:]
+		}
 
 		command, exists := isKeyword()[commandName]
 		if exists {
-			err := command.callback(cfg)
+			err := command.callback(cfg, arg...)
 			if err != nil {
 				fmt.Println(err)
 			}

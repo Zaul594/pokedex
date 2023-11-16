@@ -7,7 +7,7 @@ import (
 )
 
 // these functions used by keywords
-func commandHelp(cfg *config) error {
+func commandHelp(cfg *config, args ...string) error {
 	fmt.Println("to the Pokedex!")
 	fmt.Println("Usage:")
 
@@ -18,12 +18,12 @@ func commandHelp(cfg *config) error {
 	return nil
 }
 
-func commandExit(cfg *config) error {
+func commandExit(cfg *config, args ...string) error {
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(cfg *config) error {
+func commandMap(cfg *config, args ...string) error {
 	response, err := cfg.pokeapiClient.GetMap(cfg.nextLocationURL)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func commandMap(cfg *config) error {
 	return nil
 }
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, args ...string) error {
 	if cfg.prevLocationURL == nil {
 		return errors.New("you're on the first page")
 	}
@@ -57,12 +57,20 @@ func commandMapb(cfg *config) error {
 	return nil
 }
 
-func commandExplore(cfg *config) error {
-	response, err := cfg.pokeapiClient.LocationExplore(cfg.location)
+func commandExplore(cfg *config, args ...string) error {
+	if len(args) < 1 {
+		return errors.New("you must provide a location name")
+	}
+
+	name := args[0]
+	location, err := cfg.pokeapiClient.LocationExplore(name)
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf(response.Name)
+	fmt.Printf("Exploring %s...\n", location.Name)
+	fmt.Println("Found Pokemon: ")
+	for _, enc := range location.PokemonEncounters {
+		fmt.Printf(" - %s\n", enc.Pokemon.Name)
+	}
 	return nil
 }

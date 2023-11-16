@@ -10,7 +10,6 @@ type config struct {
 	pokeapiClient   pokeapi.Client
 	nextLocationURL *string
 	prevLocationURL *string
-	location        string
 }
 
 func main() {

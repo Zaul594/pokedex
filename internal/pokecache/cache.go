@@ -1,53 +1,53 @@
 package pokecache
 
-//pokecache creates the cache for the pokeapi
 import (
 	"sync"
 	"time"
 )
 
-// CacheEntry is the struct of the infromation bing stored in the Cache
-type CacheEntry struct {
-	CreatedAt time.Time
-	Val       []byte
-}
-
-// Cache is the struct for pokeapi's cache
+// Cache - the struct for the cache
 type Cache struct {
-	cache map[string]CacheEntry
+	cache map[string]cacheEntry
 	mux   *sync.Mutex
 }
 
-// creates a new cache for pokeapi
+// the struct for what the is in the cache
+type cacheEntry struct {
+	createdAt time.Time
+	val       []byte
+}
+
+// NewCache - used to create a new cache
 func NewCache(interval time.Duration) Cache {
 	c := Cache{
-		cache: make(map[string]CacheEntry),
+		cache: make(map[string]cacheEntry),
 		mux:   &sync.Mutex{},
 	}
-	c.reapLoop(interval)
 
-	return Cache{}
+	go c.reapLoop(interval)
+
+	return c
 }
 
-// Add adds information the the cache
-func (c *Cache) Add(key string, val []byte) {
+// Add - adds data to a cache
+func (c *Cache) Add(key string, value []byte) {
 	c.mux.Lock()
 	defer c.mux.Unlock()
-	c.cache[key] = CacheEntry{
-		CreatedAt: time.Now(),
-		Val:       val,
+	c.cache[key] = cacheEntry{
+		createdAt: time.Now(),
+		val:       value,
 	}
 }
 
-// Get is used to get information from the pokeapi
+// Get - gets data from a cache
 func (c *Cache) Get(key string) ([]byte, bool) {
 	c.mux.Lock()
 	defer c.mux.Unlock()
 	val, ok := c.cache[key]
-	return val.Val, ok
+	return val.val, ok
 }
 
-// reapLoop
+// reapLoop-
 func (c *Cache) reapLoop(interval time.Duration) {
 	ticker := time.NewTicker(interval)
 	for range ticker.C {
@@ -55,12 +55,12 @@ func (c *Cache) reapLoop(interval time.Duration) {
 	}
 }
 
-// reap
+// reap-
 func (c *Cache) reap(now time.Time, last time.Duration) {
 	c.mux.Lock()
 	defer c.mux.Unlock()
 	for k, v := range c.cache {
-		if v.CreatedAt.Before(now.Add(-last)) {
+		if v.createdAt.Before(now.Add(-last)) {
 			delete(c.cache, k)
 		}
 	}

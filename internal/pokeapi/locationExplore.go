@@ -2,63 +2,47 @@ package pokeapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
 
-func (c *Client) LocationExplore(location string) (Pokemon, error) {
-	var id int
-	resp, err := c.GetMap(nil)
-	if err != nil {
-		return Pokemon{}, err
-	}
-	for _, area := range resp.Results {
-		if location == area.Name {
-			id = area.ID
-		} else {
-			return Pokemon{}, fmt.Errorf("this is not an area name")
-		}
-	}
+func (c *Client) LocationExplore(location string) (Location, error) {
 
-	url := baseURL + "/location-area" + fmt.Sprint(id)
+	url := baseURL + "/location-area/" + location
 
 	if val, ok := c.cache.Get(url); ok {
-		pokemon := Pokemon{}
-		err := json.Unmarshal(val, &pokemon)
+		locationResp := Location{}
+		err := json.Unmarshal(val, &locationResp)
 		if err != nil {
-			return Pokemon{}, err
+			return Location{}, err
 		}
 
-		return Pokemon{}, nil
+		return locationResp, nil
 	}
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return Pokemon{}, err
+		return Location{}, err
 	}
 
 	response, err := c.httpClient.Do(request)
 	if err != nil {
-		return Pokemon{}, err
+		return Location{}, err
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode > 399 {
-		return Pokemon{}, fmt.Errorf("bad status code %v", response.Status)
-	}
-
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
-		return Pokemon{}, err
+		return Location{}, err
 	}
 
-	locationResp := LocationResp{}
+	locationResp := Location{}
 	err = json.Unmarshal(data, &locationResp)
 	if err != nil {
-		return Pokemon{}, err
+		return Location{}, err
 	}
 
 	c.cache.Add(url, data)
-	return Pokemon{}, nil
+
+	return locationResp, nil
 }

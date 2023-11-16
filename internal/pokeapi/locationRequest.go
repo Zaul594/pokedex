@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+const baseURL = "https://pokeapi.co/api/v2"
+
 // GetMap gets the location from https://pokeapi.co/api/v2
 func (c *Client) GetMap(URL *string) (LocationResp, error) {
 	endpoint := "/location-area"

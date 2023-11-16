@@ -3,7 +3,7 @@ package main
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 // sets up key words and what they do when entered into the pokedex.
@@ -31,7 +31,7 @@ func isKeyword() map[string]cliCommand {
 			callback:    commandMapb,
 		},
 		"explore": {
-			name:        "map",
+			name:        "explore <location_name>",
 			description: "shows the pokemon that can be found in this area",
 			callback:    commandExplore,
 		},
