@@ -23,6 +23,7 @@ func startRepl(cfg *config) {
 		arg := []string{}
 		if len(text) > 1 {
 			arg = text[1:]
+
 		}
 
 		command, exists := isKeyword()[commandName]
