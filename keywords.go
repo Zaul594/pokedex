@@ -40,6 +40,16 @@ func isKeyword() map[string]cliCommand {
 			description: "command used to try to catch a pokemon",
 			callback:    commandCatch,
 		},
+		"inspect": {
+			name:        "inspect <pokemon_name>",
+			description: "command used to see the information of a caught pokemon",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "command used to show pokemon caught by the player",
+			callback:    commandPokedex,
+		},
 	}
 	return keywords
 }
